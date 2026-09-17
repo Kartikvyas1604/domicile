@@ -1,36 +1,55 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# MINTGATE — agent mint-trust gate
 
-## Getting Started
+Local-first **DENY → evacuate → ALLOW** gate for Cashu agent spend. MINTGATE
+DENYs agent spend against mints that fail auditor/KYM thresholds, then
+auto-evacuates (melt → LN or rebalance → trusted mint) before the agent may
+continue.
 
-First, run the development server:
+**Not a Cashu wallet.** Not CLERK. Not escrow. Not NWC/L402/CoinJoin/PayJoin.
+
+Built for the Bitshala BOSS Battle · Machine Money track — ship by Oct 5, 2026.
+
+## Demo law
+
+The UI opens with **DENY**: 1,250 sats held on `mint.roulettesats.xyz` (auditor
+41% < 95% floor, KYM 0.12 < 0.60). Never lead with wallet UX.
+
+Demo script (≤ 4 min):
+
+1. Policy allowlist + auditor floor (20s)
+2. Proofs on a bad mint (30s)
+3. Agent tries spend → **DENY** on screen (45s)
+4. `Evacuate` — melt to LN or rebalance to trusted mint (60–90s)
+5. Spend allowed → **ALLOW** (30s)
+6. "Mint-trust gate for agents — not another Cashu wallet." (10s)
+
+## UI surface
+
+- **DENY hero** — blocking mint, held balance, reason codes, `Evacuate now` CTA
+- **Evacuate panel** — pick `Rebalance` or `Melt to LN`, step timeline
+- **Mint cards** — balances (mono, tabular), auditor success-rate + KYM meters
+  with policy floor markers
+- **Spend proxy** — simulate an agent spend; refused while DENY is active
+- **Event log** — `DENY` / `EVACUATE_START` / `EVACUATE_OK` / `ALLOW` timeline
+- **Auditor outage** — simulate `audit.8333.space` being down; cached scores +
+  allowlist-only mode
+
+## Run
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open http://localhost:3000.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Honesty
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- Venture Readiness 72/100, accepted via FOSS-bar override for this event only.
+- Auditor scores are **signal, not ground truth** — documented in the UI.
+- Demo funds/flows are simulated; the real daemon (CLI) is the source of truth.
 
-## Learn More
+## Stack
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Next.js (App Router) · TypeScript · Tailwind CSS v4 · Geist Sans/Mono ·
+lucide-react. Near-black UI, one amber accent, mono for mint URLs and balances.
