@@ -10,18 +10,16 @@ import { cn } from "@/lib/utils";
 function Meter({
   label,
   value,
+  fraction,
   floor,
   pass,
-  unit,
 }: {
   label: string;
   value: string;
   fraction: number;
   floor: number;
   pass: boolean;
-  unit: string;
 }) {
-  void unit;
   return (
     <div className="space-y-1">
       <div className="flex items-baseline justify-between gap-2">
@@ -126,7 +124,6 @@ export function MintCard({
             fraction={mint.auditorOk}
             floor={policy.minAuditorSuccessRate}
             pass={auditorPass}
-            unit="%"
           />
           <Meter
             label="KYM score"
@@ -134,7 +131,6 @@ export function MintCard({
             fraction={mint.kymScore}
             floor={policy.minKymScore}
             pass={kymPass}
-            unit=""
           />
         </div>
 
