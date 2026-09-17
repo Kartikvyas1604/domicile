@@ -97,9 +97,9 @@ export function GateConsole() {
   }, [pushEvent]);
 
   const scrollToEvacuate = useCallback(() => {
-    document
-      .getElementById("evacuate-panel")
-      ?.scrollIntoView({ behavior: "smooth", block: "start" });
+    const panel = document.getElementById("evacuate-panel");
+    panel?.scrollIntoView({ behavior: "smooth", block: "start" });
+    panel?.focus({ preventScroll: true });
   }, []);
 
   const executeEvacuate = useCallback(

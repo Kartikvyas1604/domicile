@@ -25,7 +25,11 @@ export function EvacuatePanel({
   const executing = mode !== null;
 
   return (
-    <Card id="evacuate-panel" className="scroll-mt-24 border-accent/40">
+    <Card
+      id="evacuate-panel"
+      tabIndex={-1}
+      className="scroll-mt-24 border-accent/40 focus-visible:outline-none"
+    >
       <CardHeader>
         <CardTitle>Evacuate</CardTitle>
         <Badge variant="warn">
