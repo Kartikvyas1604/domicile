@@ -5,10 +5,9 @@ import { Radio } from "lucide-react";
 import {
   DEMO_MINTS,
   DEMO_POLICY,
-  FAKE_INVOICE,
   TRUSTED_MINT,
 } from "@/lib/gate/fixtures";
-import { evaluateGate, nowTs } from "@/lib/gate/engine";
+import { evaluateGate, nowTs, stepsFor } from "@/lib/gate/engine";
 import type {
   EvacuateMode,
   GateEvent,
@@ -121,24 +120,12 @@ export function GateConsole() {
 
       const from = blocking.host;
       const amount = blocking.balanceSats;
-
-      const steps: string[] =
-        mode === "rebalance"
-          ? [
-              `EVACUATE_STEP fetching proofs from ${from}`,
-              `EVACUATE_STEP swapping → mint.minibits.cash`,
-              `EVACUATE_STEP verifying received proofs`,
-            ]
-          : [
-              "EVACUATE_STEP requesting melt quote",
-              `EVACUATE_STEP melting → ${FAKE_INVOICE.slice(0, 24)}…`,
-              "EVACUATE_STEP verifying LN settlement",
-            ];
+      const steps = stepsFor(mode);
 
       for (let i = 0; i < steps.length; i++) {
         await sleep(STEP_MS);
         if (!alive()) return;
-        pushEvent({ kind: "EVACUATE_STEP", detail: steps[i].replace("EVACUATE_STEP ", "") });
+        pushEvent({ kind: "EVACUATE_STEP", detail: `${steps[i].toLowerCase()} (${i + 1}/${steps.length})` });
         setEvacuate({ mode, step: i + 1, active: true });
       }
 
@@ -177,6 +164,10 @@ export function GateConsole() {
   }, [pushEvent]);
 
   const evacuating = evacuate?.active === true;
+  const stepDetail =
+    evacuating && evacuate
+      ? stepsFor(evacuate.mode)[Math.min(evacuate.step, stepsFor(evacuate.mode).length - 1)]
+      : null;
 
   return (
     <div className="mx-auto w-full max-w-6xl px-4 pb-16 md:px-6">
@@ -186,6 +177,7 @@ export function GateConsole() {
         onEvacuateClick={scrollToEvacuate}
         onReset={resetDemo}
         evacuating={evacuating}
+        stepDetail={stepDetail}
       />
 
       <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_340px]">

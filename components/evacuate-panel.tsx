@@ -3,13 +3,11 @@
 import { Check, Loader2 } from "lucide-react";
 import type { EvacuateMode, MintStatus } from "@/lib/gate/types";
 import { FAKE_INVOICE } from "@/lib/gate/fixtures";
+import { REBALANCE_STEPS, MELT_STEPS } from "@/lib/gate/engine";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatSats } from "@/lib/utils";
-
-const REBALANCE_STEPS = ["Fetch proofs", "Swap to trusted mint", "Verify received proofs"];
-const MELT_STEPS = ["Fetch proofs", "Melt to bolt11 invoice", "Verify LN settlement"];
 
 export function EvacuatePanel({
   blocking,

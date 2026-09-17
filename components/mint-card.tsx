@@ -43,10 +43,10 @@ function Meter({
       >
         <div
           className={cn(
-            "absolute inset-y-0 left-0 origin-left rounded-full",
+            "absolute inset-0 origin-left rounded-full motion-safe:transition-transform motion-safe:duration-700 motion-safe:ease-out",
             pass ? "bg-success" : "bg-danger"
           )}
-          style={{ width: `${Math.max(2, fraction * 100)}%` }}
+          style={{ transform: `scaleX(${Math.max(0.02, fraction)})` }}
         />
         <div
           className="absolute inset-y-0 w-px bg-foreground/40"
