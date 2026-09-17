@@ -18,7 +18,7 @@ const buttonVariants = cva(
           "border border-success/40 bg-success/10 text-success hover:bg-success/20",
       },
       size: {
-        sm: "h-9 px-3 text-xs",
+        sm: "h-10 px-3 text-xs",
         md: "h-10 px-4",
         lg: "h-11 px-6",
         icon: "h-10 w-10 p-0",
