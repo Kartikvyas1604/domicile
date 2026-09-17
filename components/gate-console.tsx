@@ -27,6 +27,7 @@ import { EvacuatePanel } from "@/components/evacuate-panel";
 
 const BOOT_MS = 900;
 const STEP_MS = 850;
+const SKELETON_COUNT = 3;
 
 type EvacuateState = {
   mode: EvacuateMode;
@@ -280,7 +281,7 @@ function AuditorCard({
 function MintSkeletons() {
   return (
     <div className="space-y-4" aria-label="Loading mint statuses">
-      {Array.from({ length: pendingStepsPlaceholder() }).map((_, i) => (
+      {Array.from({ length: SKELETON_COUNT }).map((_, i) => (
         <div
           key={i}
           className="rounded-lg border border-border bg-surface p-4 space-y-4"
@@ -301,10 +302,6 @@ function MintSkeletons() {
       ))}
     </div>
   );
-}
-
-function pendingStepsPlaceholder() {
-  return 3;
 }
 
 function sleep(ms: number) {
