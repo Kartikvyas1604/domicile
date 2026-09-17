@@ -6,35 +6,40 @@ function eventText(payload: GateEventType): string {
     case "SCAN_OK":
       return payload.detail;
     case "DENY":
-      return `DENY(${payload.mint}, ${payload.reason})`;
+      return `${payload.mint} — ${payload.reason}`;
     case "SPEND_DENIED":
-      return `spend proxy refused ${payload.amountSats} sats — ${payload.reason}`;
+      return `proxy refused ${payload.amountSats} sats — ${payload.reason}`;
     case "SPEND_OK":
-      return `spend allowed — ${payload.amountSats} sats sent`;
+      return `${payload.amountSats} sats sent`;
     case "EVACUATE_START":
-      return `EVACUATE_START ${payload.mode === "melt_ln" ? "melt→LN" : "rebalance"} from ${payload.from}`;
+      return `${payload.mode === "melt_ln" ? "melt→LN" : "rebalance"} from ${payload.from}`;
     case "EVACUATE_STEP":
       return payload.detail;
     case "EVACUATE_OK":
-      return `EVACUATE_OK ${payload.detail}`;
+      return payload.detail;
     case "ALLOW":
-      return "ALLOW — all proofs on trusted mints";
+      return "all proofs on trusted mints";
     case "AUDITOR_OFFLINE":
-      return "auditor unreachable — cached scores, allowlist-only mode";
+      return "cached scores, allowlist-only mode";
     case "AUDITOR_ONLINE":
-      return "auditor reachable — floors enforced";
+      return "floors enforced";
     case "SYSTEM":
       return payload.detail;
   }
 }
 
-function eventTone(kind: GateEventType["kind"]): string {
+type Tag = { label: string; tone: string };
+
+function eventTag(kind: GateEventType["kind"]): Tag {
   if (kind === "DENY" || kind === "SPEND_DENIED" || kind === "AUDITOR_OFFLINE")
-    return "text-danger";
+    return { label: "DENY", tone: "text-danger border-danger/40 bg-danger/10" };
   if (kind === "ALLOW" || kind === "SPEND_OK" || kind === "EVACUATE_OK")
-    return "text-success";
-  if (kind.startsWith("EVACUATE")) return "text-accent";
-  return "text-muted-foreground";
+    return { label: "OK", tone: "text-success border-success/40 bg-success/10" };
+  if (kind.startsWith("EVACUATE"))
+    return { label: "EVAC", tone: "text-accent border-accent/40 bg-accent/10" };
+  if (kind === "SCAN_OK") return { label: "SCAN", tone: "text-muted-foreground border-border bg-muted" };
+  if (kind === "SYSTEM") return { label: "SYS", tone: "text-muted-foreground border-border bg-muted" };
+  return { label: "AUDIT", tone: "text-muted-foreground border-border bg-muted" };
 }
 
 export function EventLog({ events }: { events: GateEvent[] }) {
@@ -47,20 +52,34 @@ export function EventLog({ events }: { events: GateEvent[] }) {
   }
   return (
     <ol
-      className="max-h-72 space-y-2 overflow-y-auto px-4 py-3"
+      className="max-h-80 space-y-2 overflow-y-auto px-4 py-3"
       role="log"
       aria-label="Gate event log"
     >
-      {events.map((e) => (
-        <li key={e.id} className="flex items-baseline gap-2 font-mono text-xs">
-          <span className="shrink-0 text-muted-foreground/70 tabular-nums">
-            {e.ts}
-          </span>
-          <span className={cn("min-w-0 break-words", eventTone(e.payload.kind))}>
-            {eventText(e.payload)}
-          </span>
-        </li>
-      ))}
+      {events.map((e) => {
+        const tag = eventTag(e.payload.kind);
+        return (
+          <li
+            key={e.id}
+            className="animate-enter flex items-baseline gap-2 text-xs"
+          >
+            <span className="shrink-0 text-muted-foreground/60 tabular-nums">
+              {e.ts}
+            </span>
+            <span
+              className={cn(
+                "shrink-0 rounded border px-1 py-px font-mono text-[10px] font-medium uppercase leading-4 tracking-wider",
+                tag.tone
+              )}
+            >
+              {tag.label}
+            </span>
+            <span className="min-w-0 break-words text-muted-foreground">
+              {eventText(e.payload)}
+            </span>
+          </li>
+        );
+      })}
     </ol>
   );
 }
