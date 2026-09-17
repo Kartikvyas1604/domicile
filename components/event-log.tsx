@@ -48,6 +48,7 @@ export function EventLog({ events }: { events: GateEvent[] }) {
   return (
     <ol
       className="max-h-72 space-y-2 overflow-y-auto px-4 py-3"
+      role="log"
       aria-label="Gate event log"
     >
       {events.map((e) => (
