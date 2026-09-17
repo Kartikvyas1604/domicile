@@ -194,7 +194,7 @@ export function GateConsole() {
               {blocking && (
                 <EvacuatePanel
                   blocking={blocking}
-                  executing={evacuating}
+                  mode={evacuate?.active ? evacuate.mode : null}
                   step={evacuate?.step ?? 0}
                   onExecute={executeEvacuate}
                 />
