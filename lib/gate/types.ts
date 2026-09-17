@@ -40,7 +40,7 @@ export type GateEventType =
   | { kind: "SYSTEM"; detail: string };
 
 export interface GateEvent {
-  id: number;
+  id: string;
   ts: string;
   payload: GateEventType;
 }

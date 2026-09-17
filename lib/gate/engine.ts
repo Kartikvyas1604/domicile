@@ -52,6 +52,22 @@ export function planLabel(mode: EvacuateMode): string {
   return mode === "melt_ln" ? "Melt to LN" : "Rebalance to trusted mint";
 }
 
+export const REBALANCE_STEPS = [
+  "Fetch proofs from bad mint",
+  "Swap to trusted mint",
+  "Verify received proofs",
+];
+
+export const MELT_STEPS = [
+  "Fetch proofs from bad mint",
+  "Melt to bolt11 invoice",
+  "Verify LN settlement",
+];
+
+export function stepsFor(mode: EvacuateMode): string[] {
+  return mode === "melt_ln" ? MELT_STEPS : REBALANCE_STEPS;
+}
+
 export function nowTs(): string {
   return new Date().toLocaleTimeString("en-GB", { hour12: false });
 }

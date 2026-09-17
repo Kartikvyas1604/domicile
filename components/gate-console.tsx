@@ -29,6 +29,8 @@ const BOOT_MS = 900;
 const STEP_MS = 850;
 const SKELETON_COUNT = 3;
 
+let bootScanned = false;
+
 type EvacuateState = {
   mode: EvacuateMode;
   step: number;
@@ -46,17 +48,17 @@ export function GateConsole() {
   const [auditorOnline, setAuditorOnline] = useState(true);
   const [evacuate, setEvacuate] = useState<EvacuateState | null>(null);
   const runIdRef = useRef(0);
-  const eventSeq = useRef(0);
 
   const pushEvent = useCallback((payload: GateEventType) => {
-    eventSeq.current += 1;
     setEvents((prev) => [
-      { id: eventSeq.current, ts: nowTs(), payload },
+      { id: crypto.randomUUID(), ts: nowTs(), payload },
       ...prev,
     ]);
   }, []);
 
   useEffect(() => {
+    if (bootScanned) return;
+    bootScanned = true;
     const t = window.setTimeout(() => {
       setPhase("ready");
       pushEvent({ kind: "SCAN_OK", detail: "scanned 3 mints, 4,450 sats" });
