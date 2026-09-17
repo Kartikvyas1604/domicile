@@ -1,5 +1,9 @@
 # MINTGATE — agent mint-trust gate
 
+<p>
+  <img src="public/logo-lockup.svg" alt="MINTGATE — agent mint-trust gate" width="156" />
+</p>
+
 Local-first **DENY → evacuate → ALLOW** gate for Cashu agent spend. MINTGATE
 DENYs agent spend against mints that fail auditor/KYM thresholds, then
 auto-evacuates (melt → LN or rebalance → trusted mint) before the agent may

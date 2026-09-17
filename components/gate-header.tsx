@@ -1,13 +1,11 @@
-import { Vault } from "lucide-react";
+import { Logo } from "@/components/logo";
 
 export function GateHeader() {
   return (
     <header className="sticky top-0 z-10 border-b border-border bg-background/90 backdrop-blur">
       <div className="mx-auto flex h-14 w-full max-w-6xl items-center justify-between gap-4 px-4 md:px-6">
         <div className="flex items-center gap-2.5">
-          <span className="flex h-6 w-6 items-center justify-center rounded-md bg-accent text-accent-foreground">
-            <Vault className="h-3.5 w-3.5" aria-hidden="true" />
-          </span>
+          <Logo className="h-6 w-6 text-foreground" />
           <span className="font-mono text-sm font-semibold uppercase tracking-widest">
             Mintgate
           </span>

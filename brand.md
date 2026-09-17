@@ -33,6 +33,22 @@ decoration.
 Terse, active, operator-grade. "Evacuate now" not "Click here to evacuate."
 Reason codes stay raw (`auditor 41% < 95% floor`) — that is intentional.
 
+## Logo — "Gate & Proof"
+
+One geometric mark tells the whole product story: an **arched gate**
+(2px stroke, `#ECECED` on dark) holding an **amber proof square** (`#F5B52E`,
+rx 1) centered in the doorway. The gate decides whether the proof passes —
+DENY is the resting state of the mark.
+
+- Mark geometry lives in `components/logo.tsx` (currentColor strokes, proof
+  square via `fill-accent`, override with `proofClassName` on amber surfaces).
+- `app/icon.svg` — favicon: mark on near-black tile `#09090b`, rx 7.
+- `public/logo-mark.svg` — transparent, two-color.
+- `public/logo-mark-badge.svg` — inverted amber tile with dark mark (avatars).
+- `public/logo-lockup.svg` — mark + wordmark; `MINT` muted `#9B9BA1`,
+  `GATE` bright `#ECECED` (the product is the gate, not the mint).
+- Wordmark is Geist Mono, 600, letter-spacing 2.5 — machine voice everywhere.
+
 ## Layout law
 
 - max-w-6xl container, 4px-grid spacing
