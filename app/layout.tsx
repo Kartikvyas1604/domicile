@@ -13,9 +13,18 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "MINTGATE — agent mint-trust gate",
+  metadataBase: new URL("http://localhost:3000"),
+  title: {
+    default: "MINTGATE — agent mint-trust gate",
+    template: "%s · MINTGATE",
+  },
   description:
     "Local-first DENY → evacuate → ALLOW gate for Cashu agent spend. Not a wallet.",
+  openGraph: {
+    title: "MINTGATE — agent mint-trust gate",
+    description: "DENY spend on bad mints. Evacuate. Then allow.",
+    type: "website",
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
