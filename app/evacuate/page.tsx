@@ -81,7 +81,7 @@ export default function EvacuatePage() {
             </div>
           </div>
           <Link
-            href="/"
+            href="/console"
             className="shrink-0 rounded-md bg-accent px-3 py-2 text-center text-sm font-medium text-accent-foreground transition-colors hover:bg-accent-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
             Run it live

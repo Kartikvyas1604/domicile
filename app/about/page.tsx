@@ -117,7 +117,7 @@ export default function AboutPage() {
       <p className="mt-8 text-xs text-muted-foreground">
         Built for the Bitshala BOSS Battle · Machine Money track. Start at the{" "}
         <Link
-          href="/"
+          href="/console"
           className="underline decoration-border underline-offset-2 hover:text-foreground"
         >
           console

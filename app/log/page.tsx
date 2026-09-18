@@ -88,7 +88,7 @@ export default function LogPage() {
       <p className="mt-6 text-xs text-muted-foreground">
         The live log runs on the{" "}
         <Link
-          href="/"
+          href="/console"
           className="underline decoration-border underline-offset-2 hover:text-foreground"
         >
           console
