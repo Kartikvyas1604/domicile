@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Logo } from "@/components/logo";
 import { GateNav } from "@/components/gate-nav";
 
@@ -5,7 +6,11 @@ export function GateHeader() {
   return (
     <header className="sticky top-0 z-10 border-b border-border bg-background/90 backdrop-blur">
       <div className="mx-auto flex h-14 w-full max-w-6xl items-center justify-between gap-3 px-4 md:px-6">
-        <div className="flex min-w-0 items-center gap-2.5">
+        <Link
+          href="/"
+          aria-label="MINTGATE — landing page"
+          className="flex min-w-0 items-center gap-2.5 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        >
           <Logo className="h-6 w-6 shrink-0 text-foreground" />
           <span className="shrink-0 font-mono text-sm font-semibold uppercase tracking-widest">
             Mintgate
@@ -13,7 +18,7 @@ export function GateHeader() {
           <span className="hidden min-w-0 truncate text-xs text-muted-foreground xl:inline">
             agent mint-trust gate
           </span>
-        </div>
+        </Link>
         <GateNav />
       </div>
     </header>
