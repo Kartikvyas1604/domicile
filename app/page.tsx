@@ -1,268 +1,165 @@
-import type { Metadata } from "next";
 import Link from "next/link";
-import {
-  ArrowRight,
-  Gauge,
-  Radio,
-  ScrollText,
-  ShieldAlert,
-  Wallet,
-  Zap,
-} from "lucide-react";
-import {
-  DEMO_MINTS,
-  DEMO_POLICY,
-  TRUSTED_MINT,
-} from "@/lib/gate/fixtures";
-import { evaluateGate } from "@/lib/gate/engine";
-import { formatSats } from "@/lib/utils";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { PageIntro } from "@/components/page-intro";
 
-export const metadata: Metadata = {
-  title: "Dashboard",
-};
-
-const NAV_ENTRIES = [
+const MECHANISM = [
   {
-    href: "/console",
-    icon: Gauge,
-    title: "Console",
-    body: "Live gate: DENY hero, evacuation runs, spend proxy, event log.",
+    n: "01",
+    title: "Gate the spend",
+    body: "The agent tries to pay. The proxy checks every mint holding proofs against the floors — auditor success rate, KYM score, allowlist.",
   },
   {
-    href: "/mints",
-    icon: Wallet,
-    title: "Mints",
-    body: "Registry of tracked mints with auditor and KYM meters.",
+    n: "02",
+    title: "Evacuate the proofs",
+    body: "A failing mint blocks everything. The daemon rebalances proofs to a trusted mint or melts them to Lightning — automatically, before the agent may continue.",
   },
   {
-    href: "/evacuate",
-    icon: Zap,
-    title: "Evacuate",
-    body: "The two exit routes out of a failing mint, step by step.",
-  },
-  {
-    href: "/policy",
-    icon: Radio,
-    title: "Policy",
-    body: "Floors, allowlist, and what happens when the auditor drops.",
-  },
-  {
-    href: "/log",
-    icon: ScrollText,
-    title: "Log",
-    body: "Event vocabulary plus a recorded full gate cycle.",
+    n: "03",
+    title: "Allow, quietly",
+    body: "The last proof lands on a trusted mint and the gate goes quiet. The proxy forwards again until the next bad mint appears.",
   },
 ];
 
-export default function DashboardPage() {
-  const decision = evaluateGate(DEMO_MINTS, DEMO_POLICY, true);
-  const blocking = decision.blockingMints[0];
-  const totalSats = DEMO_MINTS.reduce((sum, m) => sum + m.balanceSats, 0);
-  const blockedSats = decision.blockingMints.reduce(
-    (sum, m) => sum + m.balanceSats,
-    0
-  );
+const SURFACES = [
+  {
+    href: "/console",
+    title: "Console",
+    body: "DENY hero, live evacuation runs, spend proxy, event log — the whole loop on one screen.",
+  },
+  {
+    href: "/mints",
+    title: "Mints",
+    body: "Registry of tracked mints with balances, auditor meters, and KYM scores against policy floors.",
+  },
+  {
+    href: "/evacuate",
+    title: "Evacuate",
+    body: "Rebalance to a trusted mint or melt to LN bolt11 — the two exit routes, step by step.",
+  },
+  {
+    href: "/policy",
+    title: "Policy",
+    body: "The floors, the allowlist, and what degrades when the auditor is unreachable.",
+  },
+  {
+    href: "/log",
+    title: "Log",
+    body: "Event vocabulary and a recorded full cycle — DENY, evacuate steps, ALLOW.",
+  },
+  {
+    href: "/about",
+    title: "About",
+    body: "What MINTGATE is, and what it is not. Honesty section included.",
+  },
+];
 
-  const stats = [
-    { label: "Mints tracked", value: String(DEMO_MINTS.length) },
-    { label: "Sats held", value: formatSats(totalSats) },
-    { label: "Sats blocked", value: formatSats(blockedSats), danger: blockedSats > 0 },
-    {
-      label: "Floors",
-      value: `${Math.round(DEMO_POLICY.minAuditorSuccessRate * 100)}% / ${DEMO_POLICY.minKymScore.toFixed(2)}`,
-    },
-  ];
-
+export default function LandingPage() {
   return (
-    <div className="mx-auto w-full max-w-6xl px-4 pb-16 pt-8 md:px-6">
-      <PageIntro eyebrow="Overview" title="Dashboard">
-        The gate&apos;s current position at a glance. The live demo lives in
-        the console — every surface below is backed by the same fixtures.
-      </PageIntro>
-
-      {decision.decision === "DENY" && blocking ? (
-        <section
-          className="animate-status-in mt-8 rounded-lg border border-danger/50 bg-danger/[0.06] p-6 shadow-sm"
-          aria-label="Gate status"
+    <div className="mx-auto w-full max-w-6xl px-4 pb-16 md:px-6">
+      {/* Hero */}
+      <section className="border-b border-border pb-16 pt-20 md:pt-28" aria-labelledby="hero-title">
+        <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-muted-foreground">
+          mint-trust gate · local-first · FOSS
+        </p>
+        <h1
+          id="hero-title"
+          className="mt-6 max-w-3xl text-4xl font-semibold leading-[1.05] tracking-tight text-foreground sm:text-6xl"
         >
-          <div className="flex flex-col gap-5 md:flex-row md:items-start md:justify-between">
-            <div className="space-y-2">
-              <div className="flex items-center gap-2">
-                <ShieldAlert
-                  className="h-4 w-4 text-danger"
-                  aria-hidden="true"
-                />
-                <Badge variant="deny">Spend denied</Badge>
-              </div>
-              <div className="flex items-center gap-3">
-                <span className="relative flex h-3 w-3">
-                  <span
-                    className="absolute inline-flex h-full w-full rounded-full bg-danger opacity-60 motion-safe:animate-ping"
-                    aria-hidden="true"
-                  />
-                  <span
-                    className="relative inline-flex h-3 w-3 rounded-full bg-danger"
-                    aria-hidden="true"
-                  />
-                </span>
-                <span className="font-mono text-4xl font-semibold tracking-tight text-danger sm:text-5xl">
-                  DENY
-                </span>
-              </div>
-              <p className="font-mono text-xs text-muted-foreground">
-                gate decision · spend proxy refusing
-              </p>
-            </div>
-            <div className="max-w-md space-y-2 md:text-right">
-              <p className="text-lg font-medium tracking-tight text-foreground">
-                {formatSats(blocking.balanceSats)} sats held on{" "}
-                <span className="font-mono text-danger">{blocking.host}</span>
-              </p>
-              <ul className="space-y-1 md:text-right">
-                {blocking.reasons.map((r) => (
-                  <li key={r} className="font-mono text-xs text-danger/90">
-                    ✕ {r}
-                  </li>
-                ))}
-              </ul>
-              <div className="flex md:justify-end">
-                <Link
-                  href="/console"
-                  className="inline-flex items-center gap-1.5 rounded-md bg-accent px-4 py-2.5 text-sm font-medium text-accent-foreground transition-colors hover:bg-accent-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                >
-                  Open console
-                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
-                </Link>
-              </div>
-            </div>
-          </div>
-        </section>
-      ) : (
-        <section
-          className="mt-8 rounded-lg border border-success/50 bg-success/[0.06] p-6 shadow-sm"
-          aria-label="Gate status"
-        >
-          <div className="flex items-center gap-3">
-            <span className="h-3 w-3 rounded-full bg-success" aria-hidden="true" />
-            <span className="font-mono text-4xl font-semibold tracking-tight text-success sm:text-5xl">
-              ALLOW
-            </span>
-          </div>
-          <p className="mt-2 text-sm text-muted-foreground">
-            All proofs sit on trusted mints.
-          </p>
-        </section>
-      )}
-
-      <dl className="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
-        {stats.map((stat) => (
-          <div
-            key={stat.label}
-            className="rounded-lg border border-border bg-surface p-4"
+          Refuse bad mints{" "}
+          <span className="italic text-accent">before</span> your agent
+          spends.
+        </h1>
+        <p className="mt-6 max-w-2xl text-base leading-relaxed text-muted-foreground">
+          MINTGATE is a DENY → evacuate → ALLOW gate for Cashu agent spend. It
+          refuses pay/send against mints that fail auditor and KYM thresholds,
+          evacuates the proofs, then lets the agent continue. Everyone else
+          reverts.
+        </p>
+        <div className="mt-8 flex flex-wrap items-center gap-3">
+          <Link
+            href="/console"
+            className="inline-flex items-center gap-2 rounded-md bg-accent px-5 py-3 text-sm font-medium text-accent-foreground transition-colors hover:bg-accent-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
-            <dt className="text-xs text-muted-foreground">{stat.label}</dt>
-            <dd
-              className={
-                stat.danger
-                  ? "mt-1 font-mono text-xl font-medium tabular-nums text-danger"
-                  : "mt-1 font-mono text-xl font-medium tabular-nums text-foreground"
-              }
-            >
-              {stat.value}
-            </dd>
-          </div>
-        ))}
-      </dl>
+            Open the console
+            <ArrowRight className="h-4 w-4" aria-hidden="true" />
+          </Link>
+          <Link
+            href="/about"
+            className="inline-flex items-center gap-2 rounded-md border border-border px-5 py-3 text-sm font-medium text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          >
+            How the gate works
+          </Link>
+        </div>
+        <p className="mt-6 font-mono text-[11px] uppercase tracking-wider text-muted-foreground/70">
+          gate for agents — not another cashu wallet
+        </p>
+      </section>
 
-      <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_340px]">
-        <Card>
-          <CardHeader>
-            <CardTitle>Jump in</CardTitle>
-          </CardHeader>
-          <CardContent className="grid gap-3 sm:grid-cols-2">
-            {NAV_ENTRIES.map(({ href, icon: Icon, title, body }) => (
+      {/* Mechanism — three steps */}
+      <section className="border-b border-border py-16" aria-label="How the gate works">
+        <ol className="grid gap-10 md:grid-cols-3 md:gap-8">
+          {MECHANISM.map(({ n, title, body }) => (
+            <li key={n} className="space-y-3">
+              <p className="font-mono text-[11px] tabular-nums tracking-widest text-accent">
+                {n}
+              </p>
+              <h2 className="text-lg font-semibold tracking-tight text-foreground">
+                {title}
+              </h2>
+              <p className="text-sm leading-relaxed text-muted-foreground">
+                {body}
+              </p>
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      {/* Surfaces */}
+      <section className="py-16" aria-labelledby="surfaces-title">
+        <div className="flex items-end justify-between gap-4">
+          <PageIntro eyebrow="Site map" title="Six pages, one gate">
+            Every surface of the product, linked.
+          </PageIntro>
+        </div>
+        <ul className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {SURFACES.map(({ href, title, body }) => (
+            <li key={href}>
               <Link
-                key={href}
                 href={href}
-                className="group flex flex-col rounded-md border border-border bg-background p-4 transition-colors hover:border-accent/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                className="group flex h-full flex-col rounded-lg border border-border bg-surface p-5 transition-colors hover:border-accent/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               >
                 <div className="flex items-center justify-between gap-2">
-                  <span className="flex items-center gap-2 text-sm font-medium text-foreground">
-                    <Icon className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
+                  <span className="font-mono text-sm font-semibold uppercase tracking-widest text-foreground">
                     {title}
                   </span>
-                  <ArrowRight
-                    className="h-3.5 w-3.5 text-muted-foreground transition-colors group-hover:text-accent"
+                  <ArrowUpRight
+                    className="h-4 w-4 text-muted-foreground transition-colors group-hover:text-accent"
                     aria-hidden="true"
                   />
                 </div>
-                <span className="mt-1.5 text-xs leading-relaxed text-muted-foreground">
+                <span className="mt-2 text-xs leading-relaxed text-muted-foreground">
                   {body}
                 </span>
+                <span className="mt-4 font-mono text-[10px] uppercase tracking-wider text-muted-foreground/70 transition-colors group-hover:text-accent">
+                  open
+                </span>
               </Link>
-            ))}
-          </CardContent>
-        </Card>
+            </li>
+          ))}
+        </ul>
+      </section>
 
-        <div className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Gate state</CardTitle>
-              <Badge variant={decision.decision === "DENY" ? "deny" : "allow"}>
-                {decision.decision}
-              </Badge>
-            </CardHeader>
-            <CardContent className="space-y-2.5 text-xs">
-              <div className="flex items-baseline justify-between gap-2">
-                <span className="text-muted-foreground">Blocking mints</span>
-                <span className="font-mono tabular-nums text-danger">
-                  {decision.blockingMints.length}
-                </span>
-              </div>
-              <div className="flex items-baseline justify-between gap-2">
-                <span className="text-muted-foreground">Next step</span>
-                <span className="font-mono">
-                  {decision.next === "evacuate" ? "evacuate" : "none"}
-                </span>
-              </div>
-              <div className="flex items-baseline justify-between gap-2">
-                <span className="text-muted-foreground">Trusted mint</span>
-                <span className="truncate font-mono text-foreground">
-                  {TRUSTED_MINT.host}
-                </span>
-              </div>
-              <p className="border-t border-border pt-3 leading-relaxed text-muted-foreground">
-                Daemon scans on boot and re-scores on every evacuation step.
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Held where</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-2">
-              {DEMO_MINTS.map((m) => (
-                <Link
-                  key={m.host}
-                  href={`/mints/${m.host}`}
-                  className="flex items-baseline justify-between gap-2 rounded-md px-2 py-1.5 transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                >
-                  <span className="truncate font-mono text-xs text-muted-foreground">
-                    {m.host}
-                  </span>
-                  <span className="shrink-0 font-mono text-xs tabular-nums text-foreground">
-                    {formatSats(m.balanceSats)}
-                  </span>
-                </Link>
-              ))}
-            </CardContent>
-          </Card>
-        </div>
-      </div>
+      {/* Brand block above shared footer */}
+      <section className="border-t border-border pt-10">
+        <p className="font-mono text-sm font-semibold uppercase tracking-widest text-foreground">
+          Mintgate
+        </p>
+        <p className="mt-2 max-w-2xl text-xs leading-relaxed text-muted-foreground">
+          Local-first mint-trust gate for autonomous Cashu agents. Auditor
+          scores are signal, not ground truth. Demo funds and flows are
+          simulated; the real daemon (CLI) is the source of truth.
+        </p>
+      </section>
     </div>
   );
 }
