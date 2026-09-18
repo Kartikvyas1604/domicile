@@ -7,7 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { formatSats } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 
-function Meter({
+export function Meter({
   label,
   value,
   fraction,
